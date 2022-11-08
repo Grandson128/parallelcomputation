@@ -97,6 +97,7 @@ int **repeatedSquaringMethod(int n, int **weightMatrix){
 int main(int argc, char **argv) {
   
     int n, my_rank, n_procs;
+    double start, finish;
     MPI_Status status;
     
     n=0;
@@ -121,6 +122,8 @@ int main(int argc, char **argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &n_procs);
 
+    MPI_Barrier(MPI_COMM_WORLD);
+    start = MPI_Wtime();
 
 
     if (my_rank == 0){
@@ -134,19 +137,31 @@ int main(int argc, char **argv) {
             MPI_Finalize();
             return 0;
         }
-        
-        
-
-        int **newMatrix = allocateNewMatrix(n);
-        newMatrix = repeatedSquaringMethod(n, rootMatrix);
-        printMatrix(n, newMatrix);
+        //printMatrix(n, newMatrix);
     }
 
+
+    if(n_procs == 1){
+        int **newMatrix = allocateNewMatrix(n);
+        newMatrix = repeatedSquaringMethod(n, rootMatrix);
+    }else{
+
+        //TODO: apply FOx's algorithm to the matrix multiplication functions
+
+
+
+    }
 
 
     //printf("\nMy rank:%d my work: %d\n", my_rank, my_rank+n);
     //printf("\nProcesses:%d \n", n_procs);
 
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    finish = MPI_Wtime();
+
+    if (my_rank == 0)
+        printf("Execution time: %f seconds\n", finish - start);
 
     MPI_Finalize();
 }
